@@ -1,17 +1,23 @@
 //顶点着色程序
 var VSHADER_SOURCE = 
 'attribute vec4 a_Position;\n'+
+'uniform float u_CosB;\n'+
+'uniform float u_SinB;\n'+
 'void main() {\n' + 
-'   gl_Position = a_Position;\n' +
+'   gl_Position.x = a_Position.x*u_CosB - a_Position.y * u_SinB;\n' +
+'   gl_Position.y = a_Position.x*u_SinB + a_Position.y * u_CosB;\n' +
+'   gl_Position.z = a_Position.z;\n' +
+'   gl_Position.w = 1.0;\n' +
 '}\n';
-//片元着色器程序
+
 var FSHADER_SOURCE = 
 'void main() {\n' + 
 '   gl_FragColor = vec4(1.0, 0.0, 0.0, 1.0);\n' +
 '}\n';
 
-/**
- * 绘制一个三角形
+var ANGLE = 40;
+/*
+ * 旋转物体
  * @returns 
  */
  function main(){
@@ -28,16 +34,25 @@ var FSHADER_SOURCE =
         return null;
     }
 
+    setInterval(() => {
+        ANGLE += 5;
+        var u_CosB = gl.getUniformLocation(gl.program, "u_CosB");
+        var u_SinB = gl.getUniformLocation(gl.program, "u_SinB");
+        gl.uniform1f(u_CosB, Math.cos(Math.PI * ANGLE / 180));
+        gl.uniform1f(u_SinB, Math.sin(Math.PI * ANGLE / 180));
 
-    gl.clearColor(1,1,0,1.0);
-    gl.clear(gl.COLOR_BUFFER_BIT);
-    // gl.drawArrays(gl.POINTS, 0, n);
-    gl.drawArrays(gl.LINE_STRIP, 0, n);
-    // gl.drawArrays(gl.LINE_LOOP, 0, n);
-    // gl.drawArrays(gl.LINES, 0, n);
-    // gl.drawArrays(gl.TRIANGLE_STRIP, 0, n);
-    // gl.drawArrays(gl.TRIANGLE_FAN, 0, n);
-    // gl.drawArrays(gl.TRIANGLES, 0, n);
+        gl.clearColor(1,1,0,1.0);
+        gl.clear(gl.COLOR_BUFFER_BIT);
+        // gl.drawArrays(gl.POINTS, 0, n);
+        // gl.drawArrays(gl.LINE_STRIP, 0, n);
+        // gl.drawArrays(gl.LINE_LOOP, 0, n);
+        // gl.drawArrays(gl.LINES, 0, n);
+        // gl.drawArrays(gl.TRIANGLE_STRIP, 0, n);
+        // gl.drawArrays(gl.TRIANGLE_FAN, 0, n);
+        gl.drawArrays(gl.TRIANGLES, 0, n);
+    }, 1000/60);
+
+    
 }
 /**
  * 创建顶点缓冲区对象

@@ -1,8 +1,9 @@
 //顶点着色程序
 var VSHADER_SOURCE = 
 'attribute vec4 a_Position;\n'+
+'uniform vec4 u_Translation;\n'+
 'void main() {\n' + 
-'   gl_Position = a_Position;\n' +
+'   gl_Position = a_Position + u_Translation;\n' +
 '}\n';
 //片元着色器程序
 var FSHADER_SOURCE = 
@@ -10,8 +11,11 @@ var FSHADER_SOURCE =
 '   gl_FragColor = vec4(1.0, 0.0, 0.0, 1.0);\n' +
 '}\n';
 
+var tx = -0.5;
+var ty = 0;
+var tz = 0.0;
 /**
- * 绘制一个三角形
+ * 平移图标
  * @returns 
  */
  function main(){
@@ -28,16 +32,18 @@ var FSHADER_SOURCE =
         return null;
     }
 
+    var u_Translation = gl.getUniformLocation(gl.program, "u_Translation");
+    gl.uniform4f(u_Translation, tx, ty, tz, 0.0);
 
     gl.clearColor(1,1,0,1.0);
     gl.clear(gl.COLOR_BUFFER_BIT);
     // gl.drawArrays(gl.POINTS, 0, n);
-    gl.drawArrays(gl.LINE_STRIP, 0, n);
+    // gl.drawArrays(gl.LINE_STRIP, 0, n);
     // gl.drawArrays(gl.LINE_LOOP, 0, n);
     // gl.drawArrays(gl.LINES, 0, n);
     // gl.drawArrays(gl.TRIANGLE_STRIP, 0, n);
     // gl.drawArrays(gl.TRIANGLE_FAN, 0, n);
-    // gl.drawArrays(gl.TRIANGLES, 0, n);
+    gl.drawArrays(gl.TRIANGLES, 0, n);
 }
 /**
  * 创建顶点缓冲区对象
