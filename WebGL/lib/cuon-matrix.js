@@ -453,10 +453,25 @@ Matrix4.prototype.scale = function(x, y, z) {
  */
 Matrix4.prototype.setTranslate = function(x, y, z) {
     var e = this.elements;
-    e[0] = 1;  e[4] = 0;  e[8]  = 0;  e[12] = x;
-    e[1] = 0;  e[5] = 1;  e[9]  = 0;  e[13] = y;
-    e[2] = 0;  e[6] = 0;  e[10] = 1;  e[14] = z;
-    e[3] = 0;  e[7] = 0;  e[11] = 0;  e[15] = 1;
+    // e[0] = 1;  e[4] = 0;  e[8]  = 0;  e[12] = x;
+    // e[1] = 0;  e[5] = 1;  e[9]  = 0;  e[13] = y;
+    // e[2] = 0;  e[6] = 0;  e[10] = 1;  e[14] = z;
+    // e[3] = 0;  e[7] = 0;  e[11] = 0;  e[15] = 1;
+    return this;
+};
+
+/**
+ * 设置平行移动距离矩阵，只修改移动矩阵
+ * @param {*} x 
+ * @param {*} y 
+ * @param {*} z 
+ * @returns 
+ */
+Matrix4.prototype.setSyncTranslate = function(x, y, z) {
+    var e = this.elements;
+    e[12] = x;
+    e[13] = y;
+    e[14] = z;
     return this;
 };
 

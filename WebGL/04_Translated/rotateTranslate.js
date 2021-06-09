@@ -1,13 +1,9 @@
 //顶点着色程序
 var VSHADER_SOURCE = 
 'attribute vec4 a_Position;\n'+
-'uniform float u_CosB;\n'+
-'uniform float u_SinB;\n'+
+'uniform mat4 u_xformMatrix;\n'+
 'void main() {\n' + 
-'   gl_Position.x = a_Position.x*u_CosB - a_Position.y * u_SinB;\n' +
-'   gl_Position.y = a_Position.x*u_SinB + a_Position.y * u_CosB;\n' +
-'   gl_Position.z = a_Position.z;\n' +
-'   gl_Position.w = 1.0;\n' +
+'   gl_Position = u_xformMatrix * a_Position;\n' +
 '}\n';
 
 var FSHADER_SOURCE = 
@@ -15,9 +11,9 @@ var FSHADER_SOURCE =
 '   gl_FragColor = vec4(1.0, 0.0, 0.0, 1.0);\n' +
 '}\n';
 
-var ANGLE = 0;
+
 /*
- * 旋转物体
+ * 通过矩阵方法实现旋转并移动物体
  * @returns 
  */
  function main(){
@@ -33,14 +29,68 @@ var ANGLE = 0;
         console.log("Faile to set the positions of vertices");
         return null;
     }
+    // rotateAndMove(gl, n); 
+    rotateAndMove1(gl, n);   
+}
 
-    setInterval(() => {
-        ANGLE += 0;
-        var u_CosB = gl.getUniformLocation(gl.program, "u_CosB");
-        var u_SinB = gl.getUniformLocation(gl.program, "u_SinB");
-        gl.uniform1f(u_CosB, Math.cos(Math.PI * ANGLE / 180));
-        gl.uniform1f(u_SinB, Math.sin(Math.PI * ANGLE / 180));
 
+
+/**
+ * 边旋转边移动 使用Matrix4方法
+ * @param {*} gl 
+ * @param {*} n 
+ */
+function rotateAndMove1(gl, n){
+    var ANGLE = 0;
+    var move = 0;
+    setInterval(()=>{
+        ANGLE += 10;
+        move  += 0.4/100;        
+        var modelMatrix = new Matrix4();
+        //设置旋转角度
+        modelMatrix.setRotate(ANGLE, 0, 0, 1);
+        //设置移动距离
+        modelMatrix.translate(move, 0, 0);
+        var u_xformMatrix = gl.getUniformLocation(gl.program, "u_xformMatrix");
+        gl.uniformMatrix4fv(u_xformMatrix, false, modelMatrix.elements);
+        gl.clearColor(1,1,0,1.0);
+        gl.clear(gl.COLOR_BUFFER_BIT);
+        // gl.drawArrays(gl.POINTS, 0, n);
+        // gl.drawArrays(gl.LINE_STRIP, 0, n);
+        // gl.drawArrays(gl.LINE_LOOP, 0, n);
+        // gl.drawArrays(gl.LINES, 0, n);
+        // gl.drawArrays(gl.TRIANGLE_STRIP, 0, n);
+        gl.drawArrays(gl.TRIANGLE_FAN, 0, n);
+        // gl.drawArrays(gl.TRIANGLES, 0, n);
+    }, 1000/60)
+}
+
+/**
+ * 边旋转边移动
+ * @param {*} gl 
+ * @param {*} n 
+ */
+ function rotateAndMove(gl, n){
+    var ANGLE = 0;
+    var move = 0;
+    setInterval(()=>{
+        ANGLE += 10;
+        move  += 0.4/100; 
+        let radian = ANGLE * Math.PI / 180;
+        let sinB   = Math.sin(radian);
+        let cosB   = Math.cos(radian);
+        //webGL中的矩阵式列为主序的
+        var xFormMatrix = new Float32Array([
+            cosB, sinB, 0.0, 0.0,
+            -sinB, cosB, 0.0,  0.0,
+            0.0,  0.0,  1.0,  0.0,
+            move,  0,  0.0,  1.0 
+        ])
+
+        var u_xformMatrix = gl.getUniformLocation(gl.program, "u_xformMatrix");
+        // var u_moveformMatrix = gl.getUniformLocation(gl.program, "u_moveformMatrix");
+        gl.uniformMatrix4fv(u_xformMatrix, false, xFormMatrix);
+        // gl.uniformMatrix4fv(u_moveformMatrix, false, u_xformMatrix);
         gl.clearColor(1,1,0,1.0);
         gl.clear(gl.COLOR_BUFFER_BIT);
         // gl.drawArrays(gl.POINTS, 0, n);
@@ -50,10 +100,11 @@ var ANGLE = 0;
         // gl.drawArrays(gl.TRIANGLE_STRIP, 0, n);
         // gl.drawArrays(gl.TRIANGLE_FAN, 0, n);
         gl.drawArrays(gl.TRIANGLES, 0, n);
-    }, 1000/60);
-
-    
+    }, 1000/60)
 }
+
+
+
 /**
  * 创建顶点缓冲区对象
  * @param {*} gl 
