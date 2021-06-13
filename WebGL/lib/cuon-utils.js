@@ -31,6 +31,8 @@ function createProgram(gl, vshader, fshader) {
     var vertexShader = loadShader(gl, gl.VERTEX_SHADER, vshader);
     var fragmentShader = loadShader(gl, gl.FRAGMENT_SHADER, fshader);
     if (!vertexShader || !fragmentShader) {
+        !vertexShader && console.error("is vertexShader Error");
+        !fragmentShader && console.error("is fragmentShader Error");
         return null;
     }
 
