@@ -9,12 +9,14 @@ var VSHADER_SOURCE =
 
 var FSHADER_SOURCE = 
 'precision mediump float;\n' +
-'uniform sampler2D u_Sampler;\n' +
-'varying vec2 v_TexCoord;\n' +  
-'void main() {\n' + 
-'   gl_FragColor = texture2D(u_Sampler, v_TexCoord);\n' +
+'uniform sampler2D u_Sampler0;\n' +
+'uniform sampler2D u_Sampler1;\n' +
+'varying vec2 v_TexCoord;\n' +
+'void main() {\n' +
+'  vec4 color0 = texture2D(u_Sampler0, v_TexCoord);\n' +
+'  vec4 color1 = texture2D(u_Sampler1, v_TexCoord);\n' +
+'  gl_FragColor = color0 * color1;\n' +
 '}\n';
-
 
 
 function main() {
@@ -39,26 +41,44 @@ function main() {
 function initTextures(gl, n){
     //创建纹理对象
     var texture = gl.createTexture();
+    var textur1 = gl.createTexture();
     //获取u_Sampler的存储地址
-    var u_Sampler = gl.getUniformLocation(gl.program, 'u_Sampler');
+    var u_Sampler = gl.getUniformLocation(gl.program, 'u_Sampler0');
+    var u_Sampler1 = gl.getUniformLocation(gl.program, 'u_Sampler1');
     if(!u_Sampler){
         console.log("initVertexBuffers: gl create u_Sampler failed");
+        return -1;
+    }
+    if(!u_Sampler1){
+        console.log("initVertexBuffers: gl create u_Sampler1 failed");
         return -1;
     }
     //创建一个image对象
     var image = new Image();
     image.onload = ()=>{
-        loadTexture(gl, n, texture, u_Sampler, image);
+        loadTexture(gl, n, texture, u_Sampler, image, 0);
     }
     image.src = "./resources/sky.jpg";
+    var image1 = new Image();
+    image1.onload = ()=>{
+        loadTexture(gl, n, texture, u_Sampler1, image1, 1);
+    }
+    image1.src = "./resources/circle.gif";
     return true;
 }
-
-function loadTexture(gl, n, texture, u_Sampler, image){
+var tag1 = 0, tag2 = 1;
+function loadTexture(gl, n, texture, u_Sampler, image, tag){
     //对纹理图像进行Y轴翻转
     gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, 1);
     //开启0号纹理单元
-    gl.activeTexture(gl.TEXTURE0);
+    if(tag == 0){
+        gl.activeTexture(gl.TEXTURE0);
+        tag1 = 1;
+    }else{
+        gl.activeTexture(gl.TEXTURE1);
+        tag2 = 2
+    }
+    
     //gl.TEXTURE_2D(2维纹理) 或 gl.TEXTURE_CUBE_MAP(立方体映射纹理) 
     gl.bindTexture(gl.TEXTURE_2D, texture);
     //texParameteri(target, pname, param);将param的值赋值给pname参数上
@@ -75,9 +95,12 @@ function loadTexture(gl, n, texture, u_Sampler, image){
     //将0号纹理传递给着色器
     gl.uniform1i(u_Sampler, 0);
 
-    gl.clearColor(1,1,0,1.0);
+    // gl.clearColor(1,1,0,1.0);
     gl.clear(gl.COLOR_BUFFER_BIT);
-    gl.drawArrays(gl.TRIANGLE_STRIP, 0, n);
+    if(tag2 && tag1) {
+        gl.drawArrays(gl.TRIANGLE_STRIP, 0, n);
+    }
+    
 }
 
 
@@ -91,10 +114,10 @@ function loadTexture(gl, n, texture, u_Sampler, image){
  function initVertexBuffers(gl){
     var verticesTexCoords = new Float32Array([
         //顶点左边 //纹理坐标
-        -0.5, 0.5,  -0.3, 1.7, 
-        -0.5, -0.5, -0.3, 0.2,
-        0.5, 0.5,   1.7, 1.7,
-        0.5, -0.5,  1.7, -0.2,
+        -0.5,  0.5,   0.0, 1.0,
+        -0.5, -0.5,   0.0, 0.0,
+         0.5,  0.5,   1.0, 1.0,
+         0.5, -0.5,   1.0, 0.0,
     ]);
     var n = 4;
    

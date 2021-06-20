@@ -26,7 +26,7 @@ var tz = 0.0;
         return;
     }
     //设置顶点位置
-    var n = initVertextBuffers(gl);
+    var n = initVertexBuffers(gl);
     if(n < 0){
         console.log("Faile to set the positions of vertices");
         return null;
@@ -50,7 +50,7 @@ var tz = 0.0;
  * @param {*} gl 
  * @returns 
  */
-function initVertextBuffers(gl){
+function initVertexBuffers(gl){
     var vertices = new Float32Array([
         0.0, 0.0, 
         0.0, 0.5, 
@@ -63,7 +63,7 @@ function initVertextBuffers(gl){
     //创建缓冲区对象
     var vertexBuffer = gl.createBuffer();
     if(!vertexBuffer){
-        console.log("initVertextBuffers: gl create buffer failed");
+        console.log("initVertexBuffers: gl create buffer failed");
         return -1;
     }
     //将缓冲区对象绑定到对象, gl.ARRAY_BUFFER 表示缓冲区有顶点数据,gl.ELEMENT_ARRAY_BUFFER 表示缓冲区包含顶点索引值
