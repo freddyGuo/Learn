@@ -199,6 +199,7 @@ Matrix4.prototype.setInverseOf = function(other) {
             + s[4]*s[2]*s[9]  + s[8]*s[1]*s[6]  - s[8]*s[2]*s[5];
 
   det = s[0]*inv[0] + s[1]*inv[4] + s[2]*inv[8] + s[3]*inv[12];
+  console.log("det", det);
   if (det === 0) {
     return this;
   }
