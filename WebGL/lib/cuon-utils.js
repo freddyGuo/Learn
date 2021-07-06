@@ -40,7 +40,7 @@ function createProgram(gl, vshader, fshader) {
     return null;
   }
 
-  // Attach the shader objects
+  // Attach the shader objects 添加预先存在的着色器
   gl.attachShader(program, vertexShader);
   gl.attachShader(program, fragmentShader);
 
