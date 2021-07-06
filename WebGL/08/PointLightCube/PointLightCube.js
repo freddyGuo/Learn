@@ -64,7 +64,6 @@ function main() {
     doIT(gl, n);
         
 }
-
 function doIT(gl, n) {
     var u_ModelMatrix = gl.getUniformLocation(gl.program, "u_ModelMatrix");
     var u_MvpMatrix = gl.getUniformLocation(gl.program, 'u_MvpMatrix');
