@@ -69,6 +69,7 @@ function createProgram(gl, vshader, fshader) {
  */
 function loadShader(gl, type, source) {
   // Create shader object
+  // console.log("source", source)
   var shader = gl.createShader(type);
   if (shader == null) {
     console.log('unable to create shader');
